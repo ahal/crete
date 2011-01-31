@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+
+<!--
+build.xml adapted from Shawn Wilsher's rtse
+(http://shawnwilsher.com/extensions/rtse/)
+ -->
+
+<project name="crete" default="createxpi">
+  <tstamp>
+    <format property="build.number" pattern="yyyyMMdd" offset="-1" unit="hour"/>
+  </tstamp>
+  <property name="build.version" value="1.1.${build.number}"/>
+
+  <target name="createxpi" depends="createjar">
+    <delete file="crete.xpi"/>
+    <zip destfile="crete.xpi">
+      <zipfileset dir="" includes="lib/crete.jar"/>
+      <zipfileset dir="" includes="install.rdf"/>
+      <zipfileset dir="" includes="chrome.manifest"/>
+      <zipfileset dir="" includes="README"/>
+    </zip>
+    <antcall target="cleanup"/>
+  </target>
+
+  <target name="createjar">
+    <mkdir dir="lib"/>
+    <zip destfile="lib/crete.jar">
+      <zipfileset dir="" includes="chrome/**" excludes="**GIT"/>
+      <zipfileset dir="" includes="components/**" excludes="**GIT"/>
+    </zip>
+  </target>
+
+  <target name="unpacked">
+    <delete file="crete.xpi"/>
+    <zip destfile="crete.xpi">
+      <zipfileset dir="" includes="chrome/**" excludes="**GIT"/>
+      <zipfileset dir="" includes="components/**" excludes="**GIT"/>
+      <zipfileset dir="" includes="install.rdf"/>
+      <zipfileset dir="" includes="chrome.manifest"/>
+      <zipfileset dir="" includes="README"/>
+    </zip>
+  </target>
+
+  <target name="cleanup">
+    <!-- Delete the chrome directory, any other cleanup actions go here -->
+    <delete dir="chrome"/>
+  </target>
+</project>
