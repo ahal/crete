@@ -1,0 +1,4 @@
+content     crete    chrome/
+component {D3AAEE78-9A71-11DF-94EA-4A18DFD72085} components/crete-cmdline.js
+contract @mozilla.org/commandlinehandler/general-startup;1?type=crete {D3AAEE78-9A71-11DF-94EA-4A18DFD72085}
+category command-line-handler m-crete @mozilla.org/commandlinehandler/general-startup;1?type=crete
