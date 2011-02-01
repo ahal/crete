@@ -25,14 +25,15 @@ build.xml adapted from Shawn Wilsher's rtse
   <target name="createjar">
     <mkdir dir="jar"/>
     <zip destfile="jar/crete.jar">
-      <zipfileset dir="" includes="components/**" excludes="**SVN"/>
+      <zipfileset dir="" includes="components/**" excludes="**GIT"/>
+      <zipfileset dir="" includes="chrome/**" excludes="**GIT"/>
     </zip>
   </target>
 
   <target name="unpacked">
     <delete file="crete.xpi"/>
     <zip destfile="crete.xpi">
-      <zipfileset dir="" includes="components/**" excludes="**SVN"/>
+      <zipfileset dir="" includes="components/**" excludes="**GIT"/>
       <zipfileset dir="" includes="install.rdf"/>
       <zipfileset dir="" includes="readme.txt"/>
       <zipfileset dir="" includes="chrome.manifest" fullpath="chrome.manifest"/>
