@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://crete/skin/overlay.css" type="text/css"?>
+<!DOCTYPE overlay SYSTEM "chrome://crete/locale/overlay.dtd">
+<overlay id="crete-overlay" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+  <script src="chrome://crete/content/crete.js"/>
+  
+  <keyset>
+    <key id="open-crete" modifiers="accel shift" key="c" oncommand="creteInit();"/>
+  </keyset>
+  
+  <menupopup id="menu_ToolsPopup">
+    <menuitem key="open-crete" id="menu-crete" label="&crete;" oncommand="creteInit();"/>
+  </menupopup>
+</overlay>
