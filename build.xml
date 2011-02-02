@@ -27,6 +27,8 @@ build.xml adapted from Shawn Wilsher's rtse
     <zip destfile="jar/crete.jar">
       <zipfileset dir="" includes="components/**" excludes="**GIT"/>
       <zipfileset dir="" includes="chrome/**" excludes="**GIT"/>
+      <zipfileset dir="" includes="locale/**" excludes="**GIT"/>
+      <zipfileset dir="" includes="skin/**" excludes="**GIT"/>
     </zip>
   </target>
 
@@ -34,6 +36,9 @@ build.xml adapted from Shawn Wilsher's rtse
     <delete file="crete.xpi"/>
     <zip destfile="crete.xpi">
       <zipfileset dir="" includes="components/**" excludes="**GIT"/>
+      <zipfileset dir="" includes="chrome/**" excludes="**GIT"/>
+      <zipfileset dir="" includes="locale/**" excludes="**GIT"/>
+      <zipfileset dir="" includes="skin/**" excludes="**GIT"/>
       <zipfileset dir="" includes="install.rdf"/>
       <zipfileset dir="" includes="readme.txt"/>
       <zipfileset dir="" includes="chrome.manifest" fullpath="chrome.manifest"/>

@@ -42,7 +42,7 @@
 // to handle multiple arguments.
 
 const CRETE_CMDLINE_CONTRACTID     = "@mozilla.org/commandlinehandler/general-startup;1?type=crete";
-const CRETE_CMDLINE_CLSID          = Components.ID('{D3AAEE78-9A71-11DF-94EA-4A18DFD72085}');
+const CRETE_CMDLINE_CLSID          = Components.ID('{190f1399-4412-47da-b1af-ca4a31de8eab}');
 const CATMAN_CONTRACTID         = "@mozilla.org/categorymanager;1";
 const nsISupports               = Components.interfaces.nsISupports;
   
