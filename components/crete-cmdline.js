@@ -38,132 +38,82 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-// This only implements nsICommandLineHandler, since it needs
-// to handle multiple arguments.
+const CRETE_CONTRACTID  = "@mozilla.org/commandlinehandler/general-startup;1?type=crete";
+const CRETE_CID         = Components.ID('{190f1399-4412-47da-b1af-ca4a31de8eab}');
+const CRETE_CATEGORY    = "m-crete";
+const CRETE_DESCRIPTION = "Crete Lightweight Firefox Automation";
 
-const CRETE_CMDLINE_CONTRACTID     = "@mozilla.org/commandlinehandler/general-startup;1?type=crete";
-const CRETE_CMDLINE_CLSID          = Components.ID('{190f1399-4412-47da-b1af-ca4a31de8eab}');
-const CATMAN_CONTRACTID         = "@mozilla.org/categorymanager;1";
-const nsISupports               = Components.interfaces.nsISupports;
+const Cc = Components.classes;
+const Ci = Components.interfaces;
+const Cr = Components.results;
+
+const categoryManager = Cc["@mozilla.org/categorymanager;1"].getService(Ci.nsICategoryManager);
+const appShellService = Cc["@mozilla.org/appshell/appShellService;1"].getService(Ci.nsIAppShellService);
+const windowWatcher = Cc["@mozilla.org/embedcomp/window-watcher;1"].getService(Ci.nsIWindowWatcher);
+
+Components.utils["import"]("resource://gre/modules/XPCOMUtils.jsm");
+
+// Command Line Handler
+function CommandLineHandler() {
+    this.wrappedJSObject = this;
+};
+
+CommandLineHandler.prototype = {
+  classID: CRETE_CID,
+  classDescription: CRETE_DESCRIPTION,
+  contractID: CRETE_CONTRACTID,
   
-const nsICategoryManager        = Components.interfaces.nsICategoryManager;
-const nsICommandLine            = Components.interfaces.nsICommandLine;
-const nsICommandLineHandler     = Components.interfaces.nsICommandLineHandler;
-const nsIComponentRegistrar     = Components.interfaces.nsIComponentRegistrar;
-const nsISupportsString         = Components.interfaces.nsISupportsString;
-const nsIWindowWatcher          = Components.interfaces.nsIWindowWatcher;
+  QueryInterface: XPCOMUtils.generateQI([
+      Ci.nsISupports,
+      Ci.nsICommandLineHandler
+  ]),
 
-function CreteTesterCmdLineHandler() {}
-CreteTesterCmdLineHandler.prototype =
-{
-  /* nsISupports */
-  QueryInterface : function handler_QI(iid) {
-    if (iid.equals(nsISupports))
-      return this;
-
-    if (nsICommandLineHandler && iid.equals(nsICommandLineHandler))
-      return this;
-
-    throw Components.results.NS_ERROR_NO_INTERFACE;
-  },
+  _xpcom_categories: [{
+      category: "command-line-handler",
+      entry: CRETE_CATEGORY,
+  }],
+  
+  crete: null,
 
   /* nsICommandLineHandler */
-  handle : function handler_handle(cmdLine) {
-    var args = {};
+  handle : function (cmdLine) {
+    window = appShellService.hiddenDOMWindow;
+    
     try {
-      var uristr = cmdLine.handleFlagWithParam("crete", false);
-      if (uristr == null)
-        return;
-      try {
-        args.manifest = cmdLine.resolveURI(uristr).spec;
-      } catch (e) {
-        return;
+      this.manifest = cmdLine.handleFlagWithParam("crete", false);
+      if (cmdLine.handleFlag("crete-noisy", false)) {
+        this.noisy = true;
       }
-
-      args.noisy = cmdLine.handleFlag("crete-noisy", false);
     }
     catch (e) {
+      dump("incorrect parameter passed to crete on the command line.");
       return;
     }
 
-    // get our data through xpconnect
-    args.wrappedJSObject = args;
+    dump("manifest: " + this.manifest + "\n");
+    dump("noisy: " + this.noisy + "\n");
 
-    var wwatch = Components.classes["@mozilla.org/embedcomp/window-watcher;1"]
-                           .getService(nsIWindowWatcher);
-    wwatch.openWindow(null, "chrome://crete/content/crete.xul", "_blank",
-                      "chrome,dialog=no,all", args);
-    cmdLine.preventDefault = true;
+    /*if (this.manifest) {
+      //window.open("chrome://crete/content/crete.xul", "crete", "chrome,width=600,height=300");
+      cmdLine.preventDefault = true;
+    
+      // get our data through xpconnect
+      args.wrappedJSObject = args;
+
+      var wwatch = windowWatcher;
+      var win = wwatch.openWindow(null, "chrome://crete/content/crete.xul", "_blank", "chrome,dialog=no,all", args);
+    }*/
   },
 
-  helpInfo :
-  "  -crete <file>          Run crete test described in given manifest\n" +
-  "  -crete-noisy           Dump debug messages to console during test run\n"
-
+  helpInfo : "  -crete <file>        Run crete test described in given manifest\n" +
+             "  -crete-noisy         Dump debug messages to console during test run\n",
 };
 
-
-var CreteTesterCmdLineFactory =
-{
-  createInstance : function(outer, iid)
-  {
-    if (outer != null) {
-      throw Components.results.NS_ERROR_NO_AGGREGATION;
-    }
-
-    return new CreteTesterCmdLineHandler().QueryInterface(iid);
-  }
-};
-
-function NSGetFactory(cid) {
-  if (!cid.equals(CRETE_CMDLINE_CLSID))
-    throw Components.results.NS_ERROR_NOT_IMPLEMENTED;
-
-  return CreteTesterCmdLineFactory;
-}
-
-var CreteTesterCmdLineModule =
-{
-  registerSelf : function(compMgr, fileSpec, location, type)
-  {
-    compMgr = compMgr.QueryInterface(nsIComponentRegistrar);
-
-    compMgr.registerFactoryLocation(CRETE_CMDLINE_CLSID,
-                                    "Crete CommandLine Service",
-                                    CRETE_CMDLINE_CONTRACTID,
-                                    fileSpec,
-                                    location,
-                                    type);
-
-    var catman = Components.classes[CATMAN_CONTRACTID].getService(nsICategoryManager);
-    catman.addCategoryEntry("command-line-handler",
-                            "m-crete",
-                            CRETE_CMDLINE_CONTRACTID, true, true);
-  },
-
-  unregisterSelf : function(compMgr, fileSpec, location)
-  {
-    compMgr = compMgr.QueryInterface(nsIComponentRegistrar);
-
-    compMgr.unregisterFactoryLocation(CRETE_CMDLINE_CLSID, fileSpec);
-    catman = Components.classes[CATMAN_CONTRACTID].getService(nsICategoryManager);
-    catman.deleteCategoryEntry("command-line-handler",
-                               "m-crete", true);
-  },
-
-  getClassObject : function(compMgr, cid, iid)
-  {
-    return NSGetFactory(cid);
-  },
-
-  canUnload : function(compMgr)
-  {
-    return true;
-  }
-};
-
-
-function NSGetModule(compMgr, fileSpec) {
-  return CreteTesterCmdLineModule;
-}
-
+/**
+* XPCOMUtils.generateNSGetFactory was introduced in Mozilla 2 (Firefox 4).
+* XPCOMUtils.generateNSGetModule is for Mozilla 1.9.2 (Firefox 3.6).
+*/
+if (XPCOMUtils.generateNSGetFactory)
+    var NSGetFactory = XPCOMUtils.generateNSGetFactory([CommandLineHandler]);
+else
+    var NSGetModule = XPCOMUtils.generateNSGetModule([CommandLineHandler]);

@@ -36,11 +36,9 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-const Cc = Components.classes;
-const Ci = Components.interfaces;
-
 // the io service
-var gIOS = null;
+var gIOS = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
+
 var winWidth = 1024;
 var winHeight = 768;
 
@@ -52,20 +50,18 @@ var totalPages = 0;
 var cycles = 2;
 var cycleCount = 0;
 
-
-function creteInit() {
+function creteInit(args) {
   debugLine("in creteInit()");
   try {
-    var args = window.arguments[0].wrappedJSObject;
     var manifestURI = args.manifest;
     if (args.noisy) noisy = true;
+    
+    dumpLine("Manifest: " + manifestURI + "\nNoisy: " + noisy +"\n");
 
-    gIOS = Cc["@mozilla.org/network/io-service;1"]
-      .getService(Ci.nsIIOService);
     var fileURI = gIOS.newURI(manifestURI, null, null);
     manifest = loadManifest(fileURI)
     if (manifest.length == 0) {
-      dumpLine('crete: no manifest to test, quitting');
+      dumpLine("crete: no manifest to test, quitting");
     }
     // get our window out of the way
     window.resizeTo(100,10);
@@ -216,12 +212,10 @@ function loadManifest(manifestUri) {
 
 function debugLine(str) {
   if (noisy) {
-    dump(str);
-    dump("\n");
+    dump(str + "\n");
   }
 }
 function dumpLine(str) {
-  dump(str);
-  dump("\n");
+  dump(str + "\n");
 }
 

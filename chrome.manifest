@@ -1,7 +1,11 @@
-content crete chrome/content/
-overlay chrome://browser/content/browser.xul chrome://crete/content/overlay.xul
-
+content crete   chrome/content/
 locale	crete	en-US	locale/en-US/
-
 skin	crete	classic/1.0	skin/
+
 style	chrome://global/content/customizeToolbar.xul	chrome://crete/skin/overlay.css
+
+component {190f1399-4412-47da-b1af-ca4a31de8eab} components/crete-cmdline.js
+contract @mozilla.org/commandlinehandler/general-startup;1?type=crete {190f1399-4412-47da-b1af-ca4a31de8eab}
+category command-line-handler m-crete @mozilla.org/commandlinehandler/general-startup;1?type=crete
+
+overlay chrome://browser/content/browser.xul chrome://crete/content/overlay.xul
