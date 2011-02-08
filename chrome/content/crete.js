@@ -20,6 +20,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
+ *   Andrew Halberstadt <halbersa@gmail.com>
  *   Alice Nodelman <anodelman@mozilla.com>
  *
  * Alternatively, the contents of this file may be used under the terms of
@@ -37,14 +38,14 @@
  * ***** END LICENSE BLOCK ***** */
 
 // the io service
-var gIOS = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
+const gIOS = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
+const windowMediator = Cc["@mozilla.org/appshell/window-mediator;1"].getService(Ci.nsIWindowMediator);
 
 var winWidth = 1024;
 var winHeight = 768;
 
 var noisy = false;
 var browserWindows = [];
-var manifest = [];
 var pagesLoaded = 0;
 var totalPages = 0;
 var cycles = 2;
@@ -56,47 +57,82 @@ function creteInit(args) {
     var manifestURI = args.manifest;
     if (args.noisy) noisy = true;
     
-    dumpLine("Manifest: " + manifestURI + "\nNoisy: " + noisy +"\n");
+    debugLine("Manifest: " + manifestURI + "\nNoisy: " + noisy);
 
     var fileURI = gIOS.newURI(manifestURI, null, null);
-    manifest = loadManifest(fileURI)
-    if (manifest.length == 0) {
-      dumpLine("crete: no manifest to test, quitting");
+    debugLine("fileURI: " + fileURI);
+    
+    var obj = loadManifest(fileURI);
+    if (obj.commands.length == 0) {
+      dumpLine("crete: no commands to run, quitting");
+      return;
     }
-    // get our window out of the way
-    window.resizeTo(100,10);
 
-    runTests();
+    runTest(obj.commands);
   } catch(e) {
     dumpLine(e);
   }
+}
+
+function Driver() {
+  this.window = windowMediator.getMostRecentWindow("navigator:browser");
+}
+
+Driver.prototype.openTab = function (url) {
+  debugLine("in Driver.createTab()");
+  var browser = this.window.getBrowser();
+  return browser.addTab(url);
+}
+
+Driver.prototype.openWindow = function (args) {
 
 }
 
-function runTests() {
-  if (cycleCount < cycles) {
-    if (browserWindows.length != 0) {
-      //cleanup old windows
-      var len=browserWindows.length;
-      for(var i=0; i<len; i++) {
-        browserWindows[i].close();
-      }
+function runTest(commands) {
+  debugLine("in runTest()");
+  var driver = new Driver();
+  
+  for (var i = 0; i < commands.length; ++i) {
+    debugLine("op: " + commands[i].op);
+    switch (commands[i].op) {
+      case "openTab":
+        driver.openTab(commands[i].url);
+        break;
+      case "openWindow":
+        driver.openWindow();
+        break;
+      default:
     }
-    cycleCount++;
-    loadWindowsAndTabs();
-  } else {
-    goQuitApplication();
   }
 }
 
-function testChunk() {
-  //all the windows tabs are loaded, now i can do some measurments
-  //will eventually be described in a manfest file
-  debugLine("testChunk()");
-  runTests();
+function loadManifest(manifestUri) {
+  const fstream = Cc["@mozilla.org/network/file-input-stream;1"].createInstance(Ci.nsIFileInputStream);
+  const cstream = Cc["@mozilla.org/intl/converter-input-stream;1"].createInstance(Ci.nsIConverterInputStream);
+  
+  var uriFile = manifestUri.QueryInterface(Ci.nsIFileURL);
+  fstream.init(uriFile.file, -1, 0, 0);
+  cstream.init(fstream, "UTF-8", 0, 0);
+  
+  var data = "";
+  let (str = {}) {
+    let read = 0;
+    do {
+      read = cstream.readString(0xffffffff, str);
+      data += str.value;
+    } while (read != 0);
+  }
+  cstream.close();  // Also closes fstream
+
+  debugLine(data);
+  return JSON.parse(data);
 }
 
+
+
+
 function loadWindowsAndTabs() {
+  debugLine("in loadWindowsAndTabs()");
   function makeCreteLoadTabsFunc(browserNo) {
     return (function () {
       loadTabs(browserNo);
@@ -136,7 +172,7 @@ function loadWindowsAndTabs() {
 }
 
 function loadTabs(browserNo) {
-   debugLine('loadTabs for browserWindow ' + browserNo);
+   debugLine("in loadTabs() for browserWindow: " + browserNo);
    var tabUrls = manifest[browserNo].map(function(p) { return p.spec.toString(); });
    len = tabUrls.length;
    for(var i = 0; i<len; i++) {
@@ -154,60 +190,6 @@ function markAsLoaded() {
     pagesLoaded = 0;
     testChunk();
   }
-}
-
-function loadManifest(manifestUri) {
-  var fstream = Cc["@mozilla.org/network/file-input-stream;1"]
-    .createInstance(Ci.nsIFileInputStream);
-  var uriFile = manifestUri.QueryInterface(Ci.nsIFileURL);
-
-  fstream.init(uriFile.file, -1, 0, 0);
-  var lstream = fstream.QueryInterface(Ci.nsILineInputStream);
-
-  var d = [];
-
-  var lineNo = 0;
-  var line = {value:null};
-  var more;
-  var winNo = -1;
-  do {
-    lineNo++;
-    more = lstream.readLine(line);
-    var s = line.value;
-    debugLine("loaded manifest line " + lineNo + " :" + s);
-
-    // strip comments
-    s = s.replace(/#.*/, '');
-    // strip leading and trailing whitespace
-    s = s.replace(/^\s*/, '').replace(/s\*$/, '');
-
-    if (!s)
-      continue;
-
-    // split on whitespace, and figure out if we have any flags
-    var items = s.split(/\s+/);
-    if (items[0] == "WINDOW") { //new window starting
-      winNo++;
-      d[winNo] = []
-      continue;
-    }
-    if (items.length != 1) {
-        dumpLine("crete: Error on line " + lineNo + " in " + manifestUri.spec + ": whitespace must be %-escaped!");
-        return null;
-    }
-
-    var url = gIOS.newURI(items[0], null, manifestUri);
-    if (winNo < 0) { //assume we are in the first window
-      winNo++;
-      d[winNo] = [];
-    }
-    d[winNo].push(url);
-    totalPages++;
-
-
-  } while (more);
-
-  return d;
 }
 
 function debugLine(str) {

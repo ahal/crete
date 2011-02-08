@@ -77,8 +77,6 @@ CommandLineHandler.prototype = {
 
   /* nsICommandLineHandler */
   handle : function (cmdLine) {
-    window = appShellService.hiddenDOMWindow;
-    
     try {
       this.manifest = cmdLine.handleFlagWithParam("crete", false);
       if (cmdLine.handleFlag("crete-noisy", false)) {
@@ -89,24 +87,10 @@ CommandLineHandler.prototype = {
       dump("incorrect parameter passed to crete on the command line.");
       return;
     }
-
-    dump("manifest: " + this.manifest + "\n");
-    dump("noisy: " + this.noisy + "\n");
-
-    /*if (this.manifest) {
-      //window.open("chrome://crete/content/crete.xul", "crete", "chrome,width=600,height=300");
-      cmdLine.preventDefault = true;
-    
-      // get our data through xpconnect
-      args.wrappedJSObject = args;
-
-      var wwatch = windowWatcher;
-      var win = wwatch.openWindow(null, "chrome://crete/content/crete.xul", "_blank", "chrome,dialog=no,all", args);
-    }*/
   },
 
   helpInfo : "  -crete <file>        Run crete test described in given manifest\n" +
-             "  -crete-noisy         Dump debug messages to console during test run\n",
+             "  -crete-noisy         Dump debug messages to console during test run\n"
 };
 
 /**

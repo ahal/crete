@@ -1,7 +1,4 @@
-var Cc = Components.classes;
-var Ci = Components.interfaces;
-
-var cmdLineHandler = Cc["@mozilla.org/commandlinehandler/general-startup;1?type=crete"].getService(Ci.nsICommandLineHandler);
+const cmdLineHandler = Cc["@mozilla.org/commandlinehandler/general-startup;1?type=crete"].getService(Ci.nsICommandLineHandler);
   
 function startCrete() {
   dump("in startCrete()\n");
