@@ -1,11 +1,11 @@
-content crete   chrome/content/
-locale	crete	en-US	locale/en-US/
-skin	crete	classic/1.0	skin/
+content pep chrome/content/
+locale	pep en-US	locale/en-US/
+skin	pep classic/1.0	skin/
 
-style	chrome://global/content/customizeToolbar.xul	chrome://crete/skin/overlay.css
+style	chrome://global/content/customizeToolbar.xul	chrome://pep/skin/overlay.css
 
-component {190f1399-4412-47da-b1af-ca4a31de8eab} components/crete-cmdline.js
-contract @mozilla.org/commandlinehandler/general-startup;1?type=crete {190f1399-4412-47da-b1af-ca4a31de8eab}
-category command-line-handler m-crete @mozilla.org/commandlinehandler/general-startup;1?type=crete
+component {807b1ae9-df22-40bd-8d0a-2a583da551bb} components/pep-cmdline.js
+contract @mozilla.org/commandlinehandler/general-startup;1?type=pep {807b1ae9-df22-40bd-8d0a-2a583da551bb}
+category command-line-handler m-pep @mozilla.org/commandlinehandler/general-startup;1?type=pep
 
-overlay chrome://browser/content/browser.xul chrome://crete/content/overlay.xul
+overlay chrome://browser/content/browser.xul chrome://pep/content/overlay.xul

@@ -1,11 +1,11 @@
-const cmdLineHandler = Cc["@mozilla.org/commandlinehandler/general-startup;1?type=crete"].getService(Ci.nsICommandLineHandler);
+const cmdLineHandler = Cc["@mozilla.org/commandlinehandler/general-startup;1?type=pep"].getService(Ci.nsICommandLineHandler);
   
-function startCrete() {
-  dump("in startCrete()\n");
-  window.removeEventListener("load", startCrete, false);
+function startPep() {
+  dump("in startPep()\n");
+  window.removeEventListener("load", startPep, false);
   var cmd = cmdLineHandler.wrappedJSObject;
-  creteInit(cmd);
+  pepInit(cmd);
 }
 
 // Register load listener for command line arguments handling.
-window.addEventListener("load", startCrete, false);
+window.addEventListener("load", startPep, false);

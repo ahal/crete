@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
-<?xml-stylesheet href="chrome://crete/skin/overlay.css" type="text/css"?>
-<!DOCTYPE overlay SYSTEM "chrome://crete/locale/overlay.dtd">
-<overlay id="crete-overlay" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-  <script type="application/x-javascript" src="chrome://crete/content/crete.js"/>
-  <script type="application/x-javascript" src="chrome://crete/content/overlay.js"/>
+<?xml-stylesheet href="chrome://pep/skin/overlay.css" type="text/css"?>
+<!DOCTYPE overlay SYSTEM "chrome://pep/locale/overlay.dtd">
+<overlay id="pep-overlay" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+  <script type="application/x-javascript" src="chrome://pep/content/pep.js"/>
+  <script type="application/x-javascript" src="chrome://pep/content/overlay.js"/>
 </overlay>

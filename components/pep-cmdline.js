@@ -1,5 +1,5 @@
-/* ***** BEGIN LICENSE BLOCK *****
- * Version: MPL 1.1/GPL 2.0/LGPL 2.1
+/* ***** begin license block *****
+ * version: mpl 1.1/gpl 2.0/lgpl 2.1
  *
  * The contents of this file are subject to the Mozilla Public License Version
  * 1.1 (the "License"); you may not use this file except in compliance with
@@ -38,10 +38,10 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-const CRETE_CONTRACTID  = "@mozilla.org/commandlinehandler/general-startup;1?type=crete";
-const CRETE_CID         = Components.ID('{190f1399-4412-47da-b1af-ca4a31de8eab}');
-const CRETE_CATEGORY    = "m-crete";
-const CRETE_DESCRIPTION = "Crete Lightweight Firefox Automation";
+const PEP_CONTRACTID  = "@mozilla.org/commandlinehandler/general-startup;1?type=pep";
+const PEP_CID         = Components.ID('{807b1ae9-df22-40bd-8d0a-2a583da551bb}');
+const PEP_CATEGORY    = "m-pep";
+const PEP_DESCRIPTION = "PEP Firefox Responsiveness Testing Harness";
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
@@ -59,9 +59,9 @@ function CommandLineHandler() {
 };
 
 CommandLineHandler.prototype = {
-  classID: CRETE_CID,
-  classDescription: CRETE_DESCRIPTION,
-  contractID: CRETE_CONTRACTID,
+  classID: PEP_CID,
+  classDescription: PEP_DESCRIPTION,
+  contractID: PEP_CONTRACTID,
   
   QueryInterface: XPCOMUtils.generateQI([
       Ci.nsISupports,
@@ -70,27 +70,25 @@ CommandLineHandler.prototype = {
 
   _xpcom_categories: [{
       category: "command-line-handler",
-      entry: CRETE_CATEGORY,
+      entry: PEP_CATEGORY,
   }],
   
-  crete: null,
-
   /* nsICommandLineHandler */
   handle : function (cmdLine) {
     try {
-      this.manifest = cmdLine.handleFlagWithParam("crete", false);
-      if (cmdLine.handleFlag("crete-noisy", false)) {
+      this.manifest = cmdLine.handleFlagWithParam("pep-start", false);
+      if (cmdLine.handleFlag("pep-noisy", false)) {
         this.noisy = true;
       }
     }
     catch (e) {
-      dump("incorrect parameter passed to crete on the command line.");
+      dump("incorrect parameter passed to pep on the command line.");
       return;
     }
   },
 
-  helpInfo : "  -crete <file>        Run crete test described in given manifest\n" +
-             "  -crete-noisy         Dump debug messages to console during test run\n"
+  helpInfo : "  -pep-start <file>    Run peptests described in given manifest\n" +
+             "  -pep-noisy           Dump debug messages to console during test run\n"
 };
 
 /**

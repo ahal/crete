@@ -5,16 +5,16 @@ build.xml adapted from Shawn Wilsher's rtse
 (http://shawnwilsher.com/extensions/rtse/)
  -->
 
-<project name="crete" default="createxpi">
+<project name="pep" default="pepxpi">
   <tstamp>
     <format property="build.number" pattern="yyyyMMdd" offset="-1" unit="hour"/>
   </tstamp>
   <property name="build.version" value="1.1.${build.number}"/>
 
-  <target name="createxpi" depends="createjar">
-    <delete file="crete.xpi"/>
-    <zip destfile="crete.xpi">
-      <zipfileset dir="" includes="jar/crete.jar"/>
+  <target name="pepxpi" depends="createjar">
+    <delete file="pep.xpi"/>
+    <zip destfile="pep.xpi">
+      <zipfileset dir="" includes="jar/pep.jar"/>
       <zipfileset dir="" includes="install.rdf"/>
       <zipfileset dir="" includes="README"/>
       <zipfileset dir="" includes="chrome-jar.manifest" fullpath="chrome.manifest"/>
@@ -24,7 +24,7 @@ build.xml adapted from Shawn Wilsher's rtse
 
   <target name="createjar">
     <mkdir dir="jar"/>
-    <zip destfile="jar/crete.jar">
+    <zip destfile="jar/pep.jar">
       <zipfileset dir="" includes="components/**" excludes="**GIT"/>
       <zipfileset dir="" includes="chrome/**" excludes="**GIT"/>
       <zipfileset dir="" includes="locale/**" excludes="**GIT"/>
@@ -33,8 +33,8 @@ build.xml adapted from Shawn Wilsher's rtse
   </target>
 
   <target name="unpacked">
-    <delete file="crete.xpi"/>
-    <zip destfile="crete.xpi">
+    <delete file="pep.xpi"/>
+    <zip destfile="pep.xpi">
       <zipfileset dir="" includes="components/**" excludes="**GIT"/>
       <zipfileset dir="" includes="chrome/**" excludes="**GIT"/>
       <zipfileset dir="" includes="locale/**" excludes="**GIT"/>
